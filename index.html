@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TokoKita - Toko Online Modern</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: {
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Smooth scrolling */
+        html {
+            scroll-behavior: smooth;
+        }
+        /* Custom scrollbar for cart drawer */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 ease-in-out bg-emerald-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center space-x-3 pointer-events-none">
+        <i class="fa-solid fa-circle-check text-xl"></i>
+        <span id="toast-message" class="font-medium">Produk berhasil ditambahkan!</span>
+    </div>
+
+    <!-- Header / Navbar -->
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16 gap-4">
+                
+                <!-- Logo -->
+                <div class="flex items-center space-x-3">
+                    <a href="#" class="flex items-center space-x-2">
+                        <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center text-white font-bold text-xl shadow-md">
+                            TK
+                        </div>
+                        <span class="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">TokoKita</span>
+                    </a>
+                </div>
+
+                <!-- Search Bar (Desktop) -->
+                <div class="hidden md:flex flex-1 max-w-md mx-4">
+                    <div class="relative w-full">
+                        <input type="text" id="search-input" placeholder="Cari produk favoritmu..." 
+                            class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-transparent rounded-full text-sm focus:bg-white focus:border-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-100 transition">
+                        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                    </div>
+                </div>
+
+                <!-- Navigation & Cart -->
+                <div class="flex items-center space-x-4">
+                    <nav class="hidden lg:flex items-center space-x-6 text-sm font-medium text-slate-600">
+                        <a href="#hero" class="hover:text-blue-600 transition">Beranda</a>
+                        <a href="#products" class="hover:text-blue-600 transition">Produk</a>
+                        <a href="#categories" class="hover:text-blue-600 transition">Kategori</a>
+                    </nav>
+
+                    <!-- Cart Button -->
+                    <button id="cart-btn" class="relative p-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-full transition flex items-center justify-center focus:outline-none">
+                        <i class="fa-solid fa-bag-shopping text-lg"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-1 bg-blue-600 text-white text-xs font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Mobile Search Bar -->
+            <div class="md:hidden pb-3">
+                <div class="relative w-full">
+                    <input type="text" id="search-input-mobile" placeholder="Cari produk..." 
+                        class="w-full pl-10 pr-4 py-2 bg-slate-100 border border-transparent rounded-full text-sm focus:bg-white focus:border-blue-500 focus:outline-none transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-2.5 text-slate-400 text-sm"></i>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow">
+        
+        <!-- Hero Section -->
+        <section id="hero" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="relative bg-gradient-to-r from-blue-600 to-indigo-700 rounded-3xl overflow-hidden shadow-xl text-white p-8 sm:p-12 lg:p-16 flex flex-col justify-center">
+                <div class="absolute -right-10 -bottom-10 w-64 h-64 bg-white/10 rounded-full blur-2xl pointer-events-none"></div>
+                <div class="absolute right-1/4 -top-10 w-48 h-48 bg-blue-400/20 rounded-full blur-xl pointer-events-none"></div>
+
+                <div class="relative z-10 max-w-xl">
+                    <span class="inline-block px-3 py-1 bg-white/20 backdrop-blur-md text-xs font-semibold rounded-full uppercase tracking-wider mb-4">Promo Spesial Bulan Ini</span>
+                    <h1 class="text-3xl sm:text-5xl font-extrabold tracking-tight leading-tight mb-4">Nikmati Diskon Hingga 50% Untuk Produk Pilihan!</h1>
+                    <p class="text-blue-100 text-sm sm:text-base mb-6">Dapatkan penawaran terbaik untuk gadget, pakaian modern, dan aksesori kekinian dengan pengiriman cepat ke seluruh Indonesia.</p>
+                    <a href="#products" class="inline-flex items-center justify-center px-6 py-3 bg-white text-blue-600 font-semibold rounded-xl shadow-lg hover:bg-slate-100 transition group">
+                        Belanja Sekarang
+                        <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition-transform"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories & Filter Section -->
+        <section id="categories" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-slate-900">Kategori Produk</h2>
+            </div>
+            
+            <div class="flex items-center space-x-2 overflow-x-auto pb-2 scrollbar-none" id="category-buttons">
+                <button class="category-btn active px-5 py-2.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-blue-600 text-white shadow-sm" data-category="Semua">
+                    Semua Produk
+                </button>
+                <button class="category-btn px-5 py-2.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-category="Elektronik">
+                    <i class="fa-solid fa-laptop mr-1.5"></i> Elektronik
+                </button>
+                <button class="category-btn px-5 py-2.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-category="Pakaian">
+                    <i class="fa-solid fa-shirt mr-1.5"></i> Pakaian
+                </button>
+                <button class="category-btn px-5 py-2.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-category="Aksesoris">
+                    <i class="fa-solid fa-clock mr-1.5"></i> Aksesoris
+                </button>
+                <button class="category-btn px-5 py-2.5 rounded-full text-sm font-medium transition whitespace-nowrap bg-white text-slate-600 hover:bg-slate-100 border border-slate-200" data-category="Buku">
+                    <i class="fa-solid fa-book mr-1.5"></i> Buku
+                </button>
+            </div>
+        </section>
+
+        <!-- Product Grid Section -->
+        <section id="products" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+            <div class="flex items-center justify-between mb-6">
+                <h2 class="text-2xl font-bold text-slate-900" id="section-title">Daftar Produk</h2>
+                <span id="product-count" class="text-sm text-slate-500 font-medium">Menampilkan 8 produk</span>
+            </div>
+
+            <!-- Products Grid -->
+            <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                <!-- Javascript will populate products here -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="empty-state" class="hidden text-center py-16">
+                <i class="fa-solid fa-box-open text-5xl text-slate-300 mb-4"></i>
+                <h3 class="text-lg font-bold text-slate-700">Produk Tidak Ditemukan</h3>
+                <p class="text-slate-500 text-sm mt-1">Coba kata kunci lain atau ubah filter kategori Anda.</p>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-slate-900 text-slate-400 py-12 mt-12 border-t border-slate-800">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div class="space-y-4">
+                <div class="flex items-center space-x-2">
+                    <div class="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold text-lg">TK</div>
+                    <span class="text-xl font-bold text-white">TokoKita</span>
+                </div>
+                <p class="text-sm leading-relaxed">Platform jual beli online terpercaya dengan berbagai pilihan produk berkualitas dan kemudahan bertransaksi.</p>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Navigasi</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#hero" class="hover:text-white transition">Beranda</a></li>
+                    <li><a href="#products" class="hover:text-white transition">Semua Produk</a></li>
+                    <li><a href="#categories" class="hover:text-white transition">Kategori</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Bantuan & Layanan</h4>
+                <ul class="space-y-2 text-sm">
+                    <li><a href="#" class="hover:text-white transition">Cara Pembelian</a></li>
+                    <li><a href="#" class="hover:text-white transition">Pengiriman & Tarif</a></li>
+                    <li><a href="#" class="hover:text-white transition">Syarat & Ketentuan</a></li>
+                    <li><a href="#" class="hover:text-white transition">Kebijakan Privasi</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="text-white font-semibold mb-4">Ikuti Kami</h4>
+                <div class="flex space-x-4">
+                    <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:bg-blue-600 hover:text-white transition"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:bg-blue-400 hover:text-white transition"><i class="fa-brands fa-twitter"></i></a>
+                    <a href="#" class="w-9 h-9 rounded-full bg-slate-800 flex items-center justify-center text-slate-300 hover:bg-pink-600 hover:text-white transition"><i class="fa-brands fa-instagram"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 border-t border-slate-800 text-center text-xs">
+            <p>&copy; 2026 TokoKita. Seluruh hak cipta dilindungi undang-undang.</p>
+        </div>
+    </footer>
+
+    <!-- Cart Drawer / Sidebar -->
+    <div id="cart-drawer-backdrop" class="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 opacity-0 pointer-events-none transition-opacity duration-300"></div>
+    <aside id="cart-drawer" class="fixed top-0 right-0 h-full w-full sm:w-96 bg-white z-50 shadow-2xl transform translate-x-full transition-transform duration-300 ease-in-out flex flex-col">
+        <!-- Cart Header -->
+        <div class="p-4 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+            <div class="flex items-center space-x-2">
+                <i class="fa-solid fa-bag-shopping text-blue-600 text-xl"></i>
+                <h3 class="font-bold text-lg text-slate-800">Keranjang Belanja</h3>
+            </div>
+            <button id="close-cart-btn" class="p-2 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-200 transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+        </div>
+
+        <!-- Cart Items List -->
+        <div id="cart-items-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+            <!-- Items injected by JS -->
+        </div>
+
+        <!-- Empty Cart View -->
+        <div id="cart-empty-view" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+            <div class="w-20 h-20 bg-slate-100 rounded-full flex items-center justify-center text-slate-400 mb-4">
+                <i class="fa-solid fa-cart-arrow-down text-3xl"></i>
+            </div>
+            <h4 class="font-semibold text-slate-700 text-base">Keranjang Anda Kosong</h4>
+            <p class="text-slate-500 text-sm mt-1">Sepertinya Anda belum menambahkan produk apapun ke keranjang.</p>
+        </div>
+
+        <!-- Cart Footer / Summary -->
+        <div id="cart-footer" class="p-4 border-t border-slate-100 bg-slate-50 space-y-3">
+            <div class="flex justify-between text-sm text-slate-600">
+                <span>Subtotal</span>
+                <span id="cart-subtotal" class="font-semibold text-slate-800">Rp 0</span>
+            </div>
+            <div class="flex justify-between text-sm text-slate-600">
+                <span>Ongkos Kirim</span>
+                <span id="cart-shipping" class="font-semibold text-slate-800">Rp 15.000</span>
+            </div>
+            <div class="flex justify-between text-base font-bold text-slate-900 pt-2 border-t border-slate-200">
+                <span>Total Biaya</span>
+                <span id="cart-total" class="text-blue-600">Rp 0</span>
+            </div>
+            <button id="checkout-btn" class="w-full mt-2 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-xl shadow-md transition flex items-center justify-center space-x-2">
+                <span>Lanjut ke Pembayaran</span>
+                <i class="fa-solid fa-arrow-right text-sm"></i>
+            </button>
+        </div>
+    </aside>
+
+    <!-- Checkout Modal -->
+    <div id="checkout-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 max-h-[90vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50">
+                <h3 class="font-bold text-lg text-slate-800">Formulir Pesanan</h3>
+                <button id="close-checkout-btn" class="text-slate-400 hover:text-slate-600 p-1">
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+            
+            <!-- Modal Body / Form -->
+            <div class="p-6 overflow-y-auto space-y-4">
+                <form id="checkout-form" class="space-y-4">
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nama Lengkap</label>
+                        <input type="text" required placeholder="Budi Santoso" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Nomor WhatsApp / HP</label>
+                        <input type="tel" required placeholder="081234567890" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-1">Alamat Lengkap Pengiriman</label>
+                        <textarea required rows="2" placeholder="Jl. Merdeka No. 45, Kecamatan Gambir, Jakarta Pusat" class="w-full px-3.5 py-2.5 border border-slate-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold text-slate-600 uppercase mb-2">Metode Pembayaran</label>
+                        <div class="grid grid-cols-3 gap-3">
+                            <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition space-y-1 text-center">
+                                <input type="radio" name="payment" value="qris" checked class="sr-only peer">
+                                <i class="fa-solid fa-qrcode text-2xl text-slate-600 peer-checked:text-blue-600"></i>
+                                <span class="text-xs font-medium text-slate-700 peer-checked:text-blue-600">QRIS</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition space-y-1 text-center">
+                                <input type="radio" name="payment" value="bank" class="sr-only peer">
+                                <i class="fa-solid fa-building-columns text-2xl text-slate-600 peer-checked:text-blue-600"></i>
+                                <span class="text-xs font-medium text-slate-700 peer-checked:text-blue-600">Transfer</span>
+                            </label>
+                            <label class="border border-slate-200 rounded-xl p-3 flex flex-col items-center justify-center cursor-pointer hover:border-blue-500 transition space-y-1 text-center">
+                                <input type="radio" name="payment" value="cod" class="sr-only peer">
+                                <i class="fa-solid fa-hand-holding-dollar text-2xl text-slate-600 peer-checked:text-blue-600"></i>
+                                <span class="text-xs font-medium text-slate-700 peer-checked:text-blue-600">COD</span>
+                            </label>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 flex justify-between items-center">
+                        <span class="text-sm font-medium text-slate-700">Total Pembayaran:</span>
+                        <span id="modal-checkout-total" class="text-lg font-bold text-blue-600">Rp 0</span>
+                    </div>
+
+                    <button type="submit" class="w-full py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-xl shadow-md transition">
+                        Konfirmasi & Bayar
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Order Modal -->
+    <div id="success-modal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 opacity-0 pointer-events-none transition-opacity duration-300">
+        <div class="bg-white w-full max-w-sm rounded-2xl shadow-2xl p-6 text-center transform scale-95 transition-transform duration-300">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fa-solid fa-check text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">Pesanan Berhasil!</h3>
+            <p class="text-slate-600 text-sm mb-6">Terima kasih telah berbelanja di TokoKita. Pesanan Anda sedang kami proses.</p>
+            <button id="close-success-btn" class="w-full py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-xl transition">
+                Selesai
+            </button>
+        </div>
+    </div>
+
+        <script src="script.js"></script>
+
+</body>
+</html>
